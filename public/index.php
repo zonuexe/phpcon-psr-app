@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Narrowspark\HttpEmitter\SapiEmitter;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
+use zonuexe\PHPConPsrApp\Http\RequestHandler\Hello;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -18,9 +19,7 @@ $creator = new ServerRequestCreator(
 
 $serverRequest = $creator->fromGlobals();
 
-$response = $psr17Factory->createResponse()
-    ->withHeader('Content-Type', 'text/plain')
-    ->withBody($psr17Factory->createStream('Hello!'));
+$response = (new Hello($psr17Factory, $psr17Factory))->handle($serverRequest);
 
 $emitter = new SapiEmitter();
 $emitter->emit($response);
