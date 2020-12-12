@@ -6,6 +6,9 @@ use Narrowspark\HttpEmitter\SapiEmitter;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use zonuexe\PHPConPsrApp\Http\RequestHandler\Hello;
+use zonuexe\PHPConPsrApp\Http\RequestHandler\Index;
+use zonuexe\PHPConPsrApp\Http\RequestHandler\PHPInfo;
+use zonuexe\PHPConPsrApp\Http\RequestHandler\StaticRouter;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -19,7 +22,13 @@ $creator = new ServerRequestCreator(
 
 $serverRequest = $creator->fromGlobals();
 
-$response = (new Hello($psr17Factory, $psr17Factory))->handle($serverRequest);
+$router = new StaticRouter([
+    '/' => ['GET' => fn() => new Index($psr17Factory, $psr17Factory)],
+    '/hello' => ['GET' => fn() => new Hello($psr17Factory, $psr17Factory)],
+    '/phpinfo' => ['GET' => fn() => new PHPInfo($psr17Factory, $psr17Factory)],
+]);
+
+$response = $router->handle($serverRequest);
 
 $emitter = new SapiEmitter();
 $emitter->emit($response);
