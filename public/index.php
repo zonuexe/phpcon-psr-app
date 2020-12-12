@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Narrowspark\HttpEmitter\SapiEmitter;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
+use zonuexe\PHPConPsrApp\Http\RequestHandler\ErrorPage;
 use zonuexe\PHPConPsrApp\Http\RequestHandler\Hello;
 use zonuexe\PHPConPsrApp\Http\RequestHandler\Index;
 use zonuexe\PHPConPsrApp\Http\RequestHandler\PHPInfo;
@@ -26,7 +27,7 @@ $router = new StaticRouter([
     '/' => ['GET' => fn() => new Index($psr17Factory, $psr17Factory)],
     '/hello' => ['GET' => fn() => new Hello($psr17Factory, $psr17Factory)],
     '/phpinfo' => ['GET' => fn() => new PHPInfo($psr17Factory, $psr17Factory)],
-]);
+], fn() => new ErrorPage($psr17Factory, $psr17Factory));
 
 $response = $router->handle($serverRequest);
 
